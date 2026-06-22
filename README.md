@@ -315,10 +315,13 @@ Features currently implemented:
 - [x] Invoice Investigation API
 - [x] Real-Time Frontend Integration
 - [x] Swagger Documentation
-- [x] Invoice Investigation Drawer
-- [x] Interactive Invoice Search
-- [x] Loading & Error States
-- [x] Export Audit Reports
+
+### In Progress
+
+- [ ] Invoice Investigation Drawer
+- [ ] Interactive Invoice Search
+- [ ] Loading & Error States
+- [ ] Export Audit Reports
 
 ### Planned
 
@@ -359,4 +362,3 @@ Passionate about creating technology that transforms complex data into meaningfu
 *Turning procurement data into actionable audit intelligence.*
 
 </div>
-
