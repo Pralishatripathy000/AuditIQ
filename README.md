@@ -1,5 +1,8 @@
 <div align="center">
 
+<img width="1536" height="1024" alt="2da5167f-8ad8-4fa6-ad1e-4304f19ae612" src="https://github.com/user-attachments/assets/12d199f3-6866-4c95-a4a9-100c121149da" />
+
+
 # 🛡️ AuditIQ
 
 ### AI-Powered Audit & Compliance Intelligence Platform
