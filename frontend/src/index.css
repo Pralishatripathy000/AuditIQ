@@ -589,3 +589,36 @@ body{
   color:#5F6585;
   line-height:1.7;
 }
+
+.brand-title{
+  margin-top:18px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:74px;
+  line-height:1;
+  letter-spacing:-.06em;
+}
+
+.brand-audit{
+  background:linear-gradient(135deg,#6C63FF 0%,#A855F7 45%,#F58BC6 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  font-weight:800;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.45),
+    0 6px 18px rgba(108,99,255,.18);
+}
+
+.brand-iq{
+  background:linear-gradient(135deg,#F58BC6 0%,#FFB3D8 50%,#FFFFFF 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  font-weight:800;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.45),
+    0 6px 18px rgba(245,139,198,.20);
+}
