@@ -1,7 +1,7 @@
 import { useState } from "react";
 import API from "../api";
 
-export default function AuditCopilot({ invoice }) {
+function AuditCopilot({ invoice }) {
   const [loading, setLoading] = useState(false);
   const [copilot, setCopilot] = useState(null);
   const [error, setError] = useState("");
@@ -36,7 +36,12 @@ export default function AuditCopilot({ invoice }) {
           <p>AI-powered invoice risk explanation</p>
         </div>
 
-        <button onClick={explainRisk} disabled={loading}>
+        <button
+          type="button"
+          className="copilot-button"
+          onClick={explainRisk}
+          disabled={loading}
+        >
           {loading ? "Analyzing..." : "Explain Risk"}
         </button>
       </div>
@@ -87,3 +92,5 @@ export default function AuditCopilot({ invoice }) {
     </div>
   );
 }
+
+export default AuditCopilot;
