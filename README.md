@@ -291,7 +291,8 @@ AuditIQ exposes production-style REST APIs for dashboard analytics and risk scor
 
 ### Executive Risk Dashboard
 
-> Dashboard screenshots and workflow demonstrations will be added soon.
+<img width="1892" height="666" alt="Screenshot 2026-07-03 223824" src="https://github.com/user-attachments/assets/008eaba8-627d-440e-90ea-df0fe18d5559" />
+
 
 Features currently implemented:
 
@@ -303,37 +304,7 @@ Features currently implemented:
 - Backend Integration
 - Real-Time API Connectivity
 
----
 
-## 🗺️ Project Roadmap
-
-### Completed
-
-- [x] Risk Intelligence Dashboard
-- [x] FastAPI Backend
-- [x] PostgreSQL Integration
-- [x] CatBoost Risk Scoring Engine
-- [x] Isolation Forest Anomaly Detection
-- [x] Compliance Monitoring Dashboard
-- [x] Critical Invoice Monitoring
-- [x] Invoice Investigation API
-- [x] Real-Time Frontend Integration
-- [x] Swagger Documentation
-
-### In Progress
-
-- [ ] Invoice Investigation Drawer
-- [ ] Interactive Invoice Search
-- [ ] Loading & Error States
-- [ ] Export Audit Reports
-
-### Planned
-
-- [ ] Audit Workflow Automation
-- [ ] AuditIQ Copilot
-- [ ] Agentic Investigation Assistant
-- [ ] Cloud Deployment
-- [ ] Role-Based Access Controls
 
 ---
 
