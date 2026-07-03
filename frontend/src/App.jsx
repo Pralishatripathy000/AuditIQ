@@ -11,7 +11,7 @@ import Footer from "./components/Footer"
 import InvestigationDrawer from "./components/InvestigationDrawer"
 
 import useDashboard from "./hooks/useDashboard"
-
+import ScoreInvoice from "./components/ScoreInvoice"
 import {
   riskTrend,
   riskDrivers,
@@ -66,7 +66,7 @@ function App() {
             displayedInvoices={displayedInvoices}
             openInvoice={openInvoice}
           />
-
+          <ScoreInvoice />
           <AboutAuditIQ />
         </section>
 
