@@ -3,6 +3,7 @@ import API from "../api";
 
 function AuditCopilot({ invoice }) {
   const [loading, setLoading] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false);
   const [copilot, setCopilot] = useState(null);
   const [error, setError] = useState("");
 
@@ -17,14 +18,41 @@ function AuditCopilot({ invoice }) {
       });
 
       if (!response.data.success) {
-        throw new Error(response.data.message || "Copilot failed");
+        throw new Error(response.data.message);
       }
 
       setCopilot(response.data.copilot);
-    } catch (err) {
+    } catch {
       setError("Audit Copilot could not generate explanation.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const generateReport = async () => {
+    try {
+      setReportLoading(true);
+
+      const response = await API.post("/copilot/report", {
+        invoice,
+      });
+
+      const blob = new Blob([response.data], {
+        type: "application/pdf",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `AuditIQ_Report_${invoice.invoice_id}.pdf`;
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch {
+      alert("Failed to generate report.");
+    } finally {
+      setReportLoading(false);
     }
   };
 
@@ -36,14 +64,27 @@ function AuditCopilot({ invoice }) {
           <p>AI-powered invoice risk explanation</p>
         </div>
 
-        <button
-          type="button"
-          className="copilot-button"
-          onClick={explainRisk}
-          disabled={loading}
-        >
-          {loading ? "Analyzing..." : "Explain Risk"}
-        </button>
+        <div className="copilot-actions">
+          <button
+            className="copilot-button"
+            onClick={explainRisk}
+            disabled={loading}
+          >
+            {loading ? "Analyzing..." : "Explain Risk"}
+          </button>
+
+          {copilot && (
+            <button
+              className="report-button"
+              onClick={generateReport}
+              disabled={reportLoading}
+            >
+              {reportLoading
+                ? "Generating..."
+                : "📄 Executive Report"}
+            </button>
+          )}
+        </div>
       </div>
 
       {error && <div className="copilot-error">{error}</div>}
@@ -63,7 +104,7 @@ function AuditCopilot({ invoice }) {
           </div>
 
           <div className="copilot-section">
-            <span>Summary</span>
+            <span>Executive Summary</span>
             <p>{copilot.summary}</p>
           </div>
 
