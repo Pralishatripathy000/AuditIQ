@@ -17,15 +17,13 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
 from datetime import datetime
+from xml.sax.saxutils import escape
 
 from database import engine
 
 load_dotenv()
 
-app = FastAPI(
-    title="AuditIQ API",
-    version="1.0"
-)
+app = FastAPI(title="AuditIQ API", version="1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -77,9 +75,7 @@ def get_gemini_client():
 
 @app.get("/")
 def home():
-    return {
-        "message": "AuditIQ Risk Intelligence Platform"
-    }
+    return {"message": "AuditIQ Risk Intelligence Platform"}
 
 
 @app.get("/risk-summary")
@@ -92,7 +88,6 @@ def risk_summary():
     GROUP BY audit_review_tier
     ORDER BY invoice_count DESC
     """
-
     result = pd.read_sql(query, engine)
     return result.to_dict(orient="records")
 
@@ -106,7 +101,6 @@ def investigation_summary():
     FROM audit_risk_register
     GROUP BY investigation_priority
     """
-
     result = pd.read_sql(query, engine)
     return result.to_dict(orient="records")
 
@@ -126,7 +120,6 @@ def critical_invoices(limit: int = 20):
     ORDER BY risk_score DESC
     LIMIT {limit}
     """
-
     result = pd.read_sql(query, engine)
     return result.to_dict(orient="records")
 
@@ -140,16 +133,10 @@ def get_invoice(invoice_id: str):
     LIMIT 1
     """)
 
-    result = pd.read_sql(
-        query,
-        engine,
-        params={"invoice_id": invoice_id}
-    )
+    result = pd.read_sql(query, engine, params={"invoice_id": invoice_id})
 
     if result.empty:
-        return {
-            "message": "Invoice not found"
-        }
+        return {"message": "Invoice not found"}
 
     return result.to_dict(orient="records")[0]
 
@@ -178,7 +165,7 @@ def score_invoice(invoice: InvoiceInput):
         "budget_impact_ratio",
         "control_exception_count",
         "supplier_risk_tier",
-        "high_risk_supplier_flag"
+        "high_risk_supplier_flag",
     ]
 
     invoice_df = pd.DataFrame([invoice.model_dump()])
@@ -216,10 +203,11 @@ def score_invoice(invoice: InvoiceInput):
     if invoice.high_risk_supplier_flag == 1:
         observations.append("High-risk third-party engagement identified")
 
-    if not observations:
-        audit_observation = "No significant audit observations"
-    else:
-        audit_observation = "; ".join(observations)
+    audit_observation = (
+        "No significant audit observations"
+        if not observations
+        else "; ".join(observations)
+    )
 
     if investigation_priority == "Immediate Investigation":
         audit_recommendation = "Immediate investigation and supporting document review recommended."
@@ -234,7 +222,7 @@ def score_invoice(invoice: InvoiceInput):
         "audit_review_tier": audit_review_tier,
         "investigation_priority": investigation_priority,
         "audit_observation": audit_observation,
-        "audit_recommendation": audit_recommendation
+        "audit_recommendation": audit_recommendation,
     }
 
 
@@ -245,7 +233,7 @@ def copilot_explain(request: CopilotRequest):
     if client is None:
         return {
             "success": False,
-            "message": "Gemini API key is missing"
+            "message": "Gemini API key is missing",
         }
 
     prompt = f"""
@@ -297,30 +285,32 @@ Invoice:
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"
-            )
+            ),
         )
 
         parsed_response = json.loads(response.text)
 
         return {
             "success": True,
-            "copilot": parsed_response
+            "copilot": parsed_response,
         }
 
     except Exception as e:
         return {
             "success": False,
             "message": "Audit Copilot failed to generate explanation",
-            "error": str(e)
+            "error": str(e),
         }
-    @app.post("/copilot/report")
+
+
+@app.post("/copilot/report")
 def generate_audit_report(request: CopilotRequest):
     client = get_gemini_client()
 
     if client is None:
         return {
             "success": False,
-            "message": "Gemini API key is missing"
+            "message": "Gemini API key is missing",
         }
 
     prompt = f"""
@@ -333,21 +323,9 @@ Return ONLY valid JSON:
 {{
   "executiveSummary": "Short executive-level audit summary.",
   "riskAssessment": "Clear risk assessment.",
-  "keyFindings": [
-    "Finding 1",
-    "Finding 2",
-    "Finding 3"
-  ],
-  "recommendedActions": [
-    "Action 1",
-    "Action 2",
-    "Action 3"
-  ],
-  "complianceChecks": [
-    "Check 1",
-    "Check 2",
-    "Check 3"
-  ]
+  "keyFindings": ["Finding 1", "Finding 2", "Finding 3"],
+  "recommendedActions": ["Action 1", "Action 2", "Action 3"],
+  "complianceChecks": ["Check 1", "Check 2", "Check 3"]
 }}
 
 Invoice:
@@ -360,11 +338,14 @@ Invoice:
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"
-            )
+            ),
         )
 
         report = json.loads(response.text)
         invoice = request.invoice
+
+        def clean(value):
+            return escape(str(value if value is not None else "N/A"))
 
         buffer = BytesIO()
 
@@ -374,7 +355,7 @@ Invoice:
             rightMargin=36,
             leftMargin=36,
             topMargin=36,
-            bottomMargin=36
+            bottomMargin=36,
         )
 
         styles = getSampleStyleSheet()
@@ -382,9 +363,9 @@ Invoice:
         title_style = ParagraphStyle(
             "TitleStyle",
             parent=styles["Title"],
-            fontSize=24,
+            fontSize=26,
             textColor=colors.HexColor("#6d28d9"),
-            spaceAfter=10
+            spaceAfter=8,
         )
 
         heading_style = ParagraphStyle(
@@ -393,7 +374,7 @@ Invoice:
             fontSize=14,
             textColor=colors.HexColor("#111827"),
             spaceBefore=14,
-            spaceAfter=8
+            spaceAfter=8,
         )
 
         body_style = ParagraphStyle(
@@ -401,25 +382,25 @@ Invoice:
             parent=styles["BodyText"],
             fontSize=10,
             leading=15,
-            textColor=colors.HexColor("#374151")
+            textColor=colors.HexColor("#374151"),
         )
 
-        story = []
-
-        story.append(Paragraph("AuditIQ", title_style))
-        story.append(Paragraph("Enterprise AI Audit Report", body_style))
-        story.append(Spacer(1, 14))
+        story = [
+            Paragraph("AuditIQ", title_style),
+            Paragraph("Enterprise AI Audit Report", body_style),
+            Spacer(1, 14),
+        ]
 
         overview_data = [
-            ["Invoice ID", str(invoice.get("invoice_id", "N/A"))],
-            ["Supplier", str(invoice.get("supplier_id", "N/A"))],
-            ["Department", str(invoice.get("department_id", "N/A"))],
-            ["Country", str(invoice.get("supplier_country", "N/A"))],
-            ["Invoice Amount", str(invoice.get("invoice_amount", "N/A"))],
-            ["Risk Score", str(invoice.get("risk_score", "N/A"))],
-            ["Review Tier", str(invoice.get("audit_review_tier", "N/A"))],
-            ["Investigation Priority", str(invoice.get("investigation_priority", "N/A"))],
-            ["Generated At", datetime.now().strftime("%d %b %Y, %I:%M %p")]
+            ["Invoice ID", clean(invoice.get("invoice_id"))],
+            ["Supplier", clean(invoice.get("supplier_id"))],
+            ["Department", clean(invoice.get("department_id"))],
+            ["Country", clean(invoice.get("supplier_country"))],
+            ["Invoice Amount", clean(invoice.get("invoice_amount"))],
+            ["Risk Score", clean(invoice.get("risk_score"))],
+            ["Review Tier", clean(invoice.get("audit_review_tier"))],
+            ["Investigation Priority", clean(invoice.get("investigation_priority"))],
+            ["Generated At", datetime.now().strftime("%d %b %Y, %I:%M %p")],
         ]
 
         table = Table(overview_data, colWidths=[160, 330])
@@ -435,28 +416,27 @@ Invoice:
         story.append(table)
 
         story.append(Paragraph("Executive Summary", heading_style))
-        story.append(Paragraph(report.get("executiveSummary", "N/A"), body_style))
+        story.append(Paragraph(clean(report.get("executiveSummary")), body_style))
 
         story.append(Paragraph("Risk Assessment", heading_style))
-        story.append(Paragraph(report.get("riskAssessment", "N/A"), body_style))
+        story.append(Paragraph(clean(report.get("riskAssessment")), body_style))
 
         story.append(Paragraph("Key Findings", heading_style))
         for item in report.get("keyFindings", []):
-            story.append(Paragraph(f"• {item}", body_style))
+            story.append(Paragraph(f"- {clean(item)}", body_style))
 
         story.append(Paragraph("Recommended Auditor Actions", heading_style))
         for item in report.get("recommendedActions", []):
-            story.append(Paragraph(f"• {item}", body_style))
+            story.append(Paragraph(f"- {clean(item)}", body_style))
 
         story.append(Paragraph("Compliance Checks", heading_style))
         for item in report.get("complianceChecks", []):
-            story.append(Paragraph(f"• {item}", body_style))
+            story.append(Paragraph(f"- {clean(item)}", body_style))
 
         story.append(Spacer(1, 18))
         story.append(Paragraph("Generated by AuditIQ AI Copilot", body_style))
 
         doc.build(story)
-
         buffer.seek(0)
 
         filename = f"AuditIQ_Report_{invoice.get('invoice_id', 'invoice')}.pdf"
@@ -466,12 +446,12 @@ Invoice:
             media_type="application/pdf",
             headers={
                 "Content-Disposition": f"attachment; filename={filename}"
-            }
+            },
         )
 
     except Exception as e:
         return {
             "success": False,
             "message": "Failed to generate audit report",
-            "error": str(e)
+            "error": str(e),
         }

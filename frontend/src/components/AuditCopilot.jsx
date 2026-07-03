@@ -13,9 +13,7 @@ function AuditCopilot({ invoice }) {
       setError("");
       setCopilot(null);
 
-      const response = await API.post("/copilot/explain", {
-        invoice,
-      });
+      const response = await API.post("/copilot/explain", { invoice });
 
       if (!response.data.success) {
         throw new Error(response.data.message);
@@ -33,20 +31,25 @@ function AuditCopilot({ invoice }) {
     try {
       setReportLoading(true);
 
-      const response = await API.post("/copilot/report", {
-        invoice,
-      });
+      const response = await API.post(
+        "/copilot/report",
+        { invoice },
+        { responseType: "blob" }
+      );
 
-      const blob = new Blob([response.data], {
-        type: "application/pdf",
-      });
+      if (response.data.type !== "application/pdf") {
+        alert("Backend returned an error instead of PDF.");
+        return;
+      }
 
-      const url = window.URL.createObjectURL(blob);
-
+      const url = window.URL.createObjectURL(response.data);
       const link = document.createElement("a");
+
       link.href = url;
-      link.download = `AuditIQ_Report_${invoice.invoice_id}.pdf`;
+      link.download = `AuditIQ_Report_${invoice.invoice_id || "invoice"}.pdf`;
+      document.body.appendChild(link);
       link.click();
+      link.remove();
 
       window.URL.revokeObjectURL(url);
     } catch {
@@ -66,6 +69,7 @@ function AuditCopilot({ invoice }) {
 
         <div className="copilot-actions">
           <button
+            type="button"
             className="copilot-button"
             onClick={explainRisk}
             disabled={loading}
@@ -75,13 +79,12 @@ function AuditCopilot({ invoice }) {
 
           {copilot && (
             <button
+              type="button"
               className="report-button"
               onClick={generateReport}
               disabled={reportLoading}
             >
-              {reportLoading
-                ? "Generating..."
-                : "📄 Executive Report"}
+              {reportLoading ? "Generating..." : "📄 Executive Report"}
             </button>
           )}
         </div>
