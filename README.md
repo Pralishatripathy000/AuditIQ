@@ -1,3 +1,4 @@
+<img width="1983" height="793" alt="9bce7f46-839c-4366-9c9f-6f2a70d56c65" src="https://github.com/user-attachments/assets/1b6ab32a-c859-430c-bcd0-82e6eb09877e" />
 
 
 # 🛡️ AuditIQ
