@@ -1,9 +1,11 @@
+import AuditCopilot from "./AuditCopilot";
+
 function InvestigationDrawer({
   drawerOpen,
   selectedInvoice,
   setDrawerOpen,
 }) {
-  if (!drawerOpen || !selectedInvoice) return null
+  if (!drawerOpen || !selectedInvoice) return null;
 
   return (
     <div
@@ -41,7 +43,10 @@ function InvestigationDrawer({
           <div className="drawer-item">
             <span>Invoice Amount</span>
             <strong>
-              ${Number(selectedInvoice.invoice_amount).toLocaleString()}
+              $
+              {Number(
+                selectedInvoice.invoice_amount ?? 0
+              ).toLocaleString()}
             </strong>
           </div>
 
@@ -71,13 +76,17 @@ function InvestigationDrawer({
 
           <p>
             Immediate manual investigation recommended.
-            Hold payment until the invoice has been verified
-            by the audit team.
+            Hold payment until the invoice has been verified by
+            the audit team. Validate supporting documentation,
+            supplier history and approval workflow before
+            releasing payment.
           </p>
         </div>
+
+        <AuditCopilot invoice={selectedInvoice} />
       </div>
     </div>
-  )
+  );
 }
 
-export default InvestigationDrawer
+export default InvestigationDrawer;
