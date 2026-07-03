@@ -5,13 +5,21 @@ from sqlalchemy import text
 import pandas as pd
 import joblib
 from pathlib import Path
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+import os
+import json
 
 from database import engine
+
+load_dotenv()
 
 app = FastAPI(
     title="AuditIQ API",
     version="1.0"
 )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -47,6 +55,17 @@ class InvoiceInput(BaseModel):
     control_exception_count: int
     supplier_risk_tier: str
     high_risk_supplier_flag: int
+
+
+class CopilotRequest(BaseModel):
+    invoice: dict
+
+
+def get_gemini_client():
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return None
+    return genai.Client(api_key=api_key)
 
 
 @app.get("/")
@@ -210,3 +229,80 @@ def score_invoice(invoice: InvoiceInput):
         "audit_observation": audit_observation,
         "audit_recommendation": audit_recommendation
     }
+
+
+@app.post("/copilot/explain")
+def copilot_explain(request: CopilotRequest):
+    client = get_gemini_client()
+
+    if client is None:
+        return {
+            "success": False,
+            "message": "Gemini API key is missing"
+        }
+
+    prompt = f"""
+You are AuditIQ Copilot, an AI-powered audit assistant for invoice risk review.
+
+Analyze the invoice below like a senior internal auditor.
+
+Focus on:
+- invoice fraud risk
+- duplicate payment risk
+- supplier risk
+- anomaly score
+- risk score
+- compliance exceptions
+- audit review priority
+- investigation priority
+- recommended next steps
+
+Return ONLY valid JSON in this exact structure:
+
+{{
+  "riskLevel": "Low | Medium | High | Critical",
+  "confidence": 0,
+  "summary": "Short auditor-friendly summary.",
+  "keyFindings": [
+    "Finding 1",
+    "Finding 2",
+    "Finding 3"
+  ],
+  "recommendedActions": [
+    "Action 1",
+    "Action 2",
+    "Action 3"
+  ],
+  "complianceChecks": [
+    "Check 1",
+    "Check 2",
+    "Check 3"
+  ]
+}}
+
+Invoice:
+{json.dumps(request.invoice, indent=2, default=str)}
+"""
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+
+        parsed_response = json.loads(response.text)
+
+        return {
+            "success": True,
+            "copilot": parsed_response
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Audit Copilot failed to generate explanation",
+            "error": str(e)
+        }
