@@ -291,6 +291,9 @@ AuditIQ exposes production-style REST APIs for dashboard analytics and risk scor
 <img width="1901" height="577" alt="Screenshot 2026-07-03 224015" src="https://github.com/user-attachments/assets/6dfc6689-b2a4-446d-a5ed-27c42ce0eedc" />
 <img width="1857" height="557" alt="Screenshot 2026-07-03 224040" src="https://github.com/user-attachments/assets/51dab27e-1b65-4846-bc20-dbc50e7123ac" />
 
+<img width="1882" height="605" alt="Screenshot 2026-07-03 224120" src="https://github.com/user-attachments/assets/75fdeb67-b36f-4285-8cb1-18aa5357f6d4" />
+<img width="1892" height="695" alt="Screenshot 2026-07-03 224101" src="https://github.com/user-attachments/assets/9822aa84-ebdb-4e3a-8738-f0a845f8b102" />
+<img width="1892" height="490" alt="Screenshot 2026-07-03 224141" src="https://github.com/user-attachments/assets/d2ab52be-cf79-4052-8184-143b1356d43b" />
 
 
 Features currently implemented:
