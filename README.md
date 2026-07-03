@@ -1,6 +1,7 @@
 <div align="center">
 
-<img width="1536" height="1024" alt="2da5167f-8ad8-4fa6-ad1e-4304f19ae612" src="https://github.com/user-attachments/assets/12d199f3-6866-4c95-a4a9-100c121149da" />
+<img width="1892" height="666" alt="Screenshot 2026-07-03 223824" src="https://github.com/user-attachments/assets/008eaba8-627d-440e-90ea-df0fe18d5559" />
+
 
 
 # 🛡️ AuditIQ
