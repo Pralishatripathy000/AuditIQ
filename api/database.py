@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from urllib.parse import quote_plus
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -12,9 +15,12 @@ if not DATABASE_URL:
     DB_PORT = "5432"
     DB_NAME = "AuditIQ_DB"
 
-    DATABASE_URL = f"postgresql://auditiq_user:XLvKtT8sEgfOrdq4QmZGOo21sQXzlp1Z@dpg-d9417lsvikkc73badla0-a/auditiq"
+    DATABASE_URL = (
+        f"postgresql://{DB_USER}:{DB_PASSWORD}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(
     autocommit=False,
