@@ -3,7 +3,12 @@ function Hero({ error }) {
     <section className="hero">
       <div>
         <span className="eyebrow">Enterprise Risk & Compliance Intelligence</span>
-        <h1>AuditIQ</h1>
+
+        <h1 className="brand-title">
+          <span className="brand-audit">Audit</span>
+          <span className="brand-iq">IQ</span>
+        </h1>
+
         <p>
           AI-powered procurement risk intelligence platform for control monitoring,
           compliance review, anomaly detection and audit investigation prioritization.
