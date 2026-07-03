@@ -19,9 +19,9 @@ from io import BytesIO
 from datetime import datetime
 from xml.sax.saxutils import escape
 
-from database import engine
-
 load_dotenv()
+
+from database import engine
 
 app = FastAPI(title="AuditIQ API", version="1.0")
 
