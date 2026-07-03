@@ -34,6 +34,8 @@ function App() {
   const [criticalInvoices, setCriticalInvoices] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [selectedInvoice, setSelectedInvoice] = useState(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -60,6 +62,15 @@ function App() {
 
     fetchDashboardData()
   }, [])
+  async function openInvoice(invoiceId) {
+    try {
+      const response = await API.get(`/invoice/${invoiceId}`)
+      setSelectedInvoice(response.data)
+      setDrawerOpen(true)
+   } catch (err) {
+     console.error(err)
+   }
+ }
 
   const getCount = (row) =>
     row.invoice_count ||
@@ -119,6 +130,7 @@ function App() {
       ]
 
   return (
+    <>
     <main className="dashboard">
       <section className="hero">
         <div>
@@ -288,7 +300,11 @@ function App() {
 
           <div className="invoice-list">
             {displayedInvoices.map((invoice) => (
-              <div className="invoice-row" key={invoice.invoice_id}>
+              <div
+                className="invoice-row"
+                key={invoice.invoice_id}
+                onClick={() => openInvoice(invoice.invoice_id)}
+              >
                 <div>
                   <h4>{invoice.invoice_id}</h4>
                   <p>{invoice.investigation_priority || "Immediate Investigation"}</p>
@@ -342,11 +358,91 @@ function App() {
         </div>
       </section>
 
-      <footer className="creator-footer">
+            <footer className="creator-footer">
         <p>Built by <span>Pralisha Tripathy</span></p>
       </footer>
+
     </main>
-  )
+
+    {drawerOpen && selectedInvoice && (
+      <div
+        className="drawer-overlay"
+        onClick={() => setDrawerOpen(false)}
+      >
+        <div
+          className="investigation-drawer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="drawer-header">
+            <h2>Investigation Details</h2>
+
+            <button
+              className="drawer-close"
+              onClick={() => setDrawerOpen(false)}
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="drawer-section">
+
+            <div className="drawer-item">
+              <span>Invoice ID</span>
+              <strong>{selectedInvoice.invoice_id}</strong>
+            </div>
+
+            <div className="drawer-item">
+              <span>Risk Score</span>
+              <strong>
+                {selectedInvoice.risk_score?.toFixed(1) ?? "99.9"}
+              </strong>
+            </div>
+
+            <div className="drawer-item">
+              <span>Invoice Amount</span>
+              <strong>
+                ${Number(selectedInvoice.invoice_amount).toLocaleString()}
+              </strong>
+            </div>
+
+            <div className="drawer-item">
+              <span>Supplier</span>
+              <strong>{selectedInvoice.supplier_id}</strong>
+            </div>
+
+            <div className="drawer-item">
+              <span>Department</span>
+              <strong>{selectedInvoice.department_id}</strong>
+            </div>
+
+            <div className="drawer-item">
+              <span>Country</span>
+              <strong>{selectedInvoice.supplier_country}</strong>
+            </div>
+
+            <div className="drawer-item">
+              <span>Fraud Type</span>
+              <strong>{selectedInvoice.fraud_type}</strong>
+            </div>
+
+          </div>
+
+          <div className="recommendation-box">
+            <h4>Recommendation</h4>
+
+            <p>
+              Immediate manual investigation recommended.
+              Hold payment until the invoice has been verified
+              by the audit team.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    )}
+
+  </>
+)
 }
 
 export default App
