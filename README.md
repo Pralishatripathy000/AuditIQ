@@ -104,7 +104,56 @@ Key capabilities include:
 
                               Risk Intelligence & Insights
 ```
+## 📂 Repository Structure
 
+```text
+AuditIQ/
+│
+├── 📁 api/                          # FastAPI backend and ML inference services
+│   ├── main.py                      # REST API endpoints and business logic
+│   ├── database.py                  # PostgreSQL connection configuration
+│   ├── seed_render_db.py            # Utility to seed Render PostgreSQL database
+│   ├── requirements.txt             # Backend Python dependencies
+│   └── .env                         # Environment variables (local only)
+│
+├── 📁 frontend/                     # React + Vite frontend application
+│   ├── 📁 src/
+│   │   ├── App.jsx                  # Root application component
+│   │   ├── main.jsx                 # React application entry point
+│   │   ├── api.js                   # Axios API configuration
+│   │   ├── App.css                  # Dashboard styling
+│   │   └── index.css                # Global styles
+│   │
+│   ├── 📁 public/                   # Static assets
+│   ├── package.json                 # Frontend dependencies
+│   ├── vite.config.js               # Vite configuration
+│   ├── tailwind.config.js           # Tailwind configuration
+│   └── postcss.config.js            # PostCSS configuration
+│
+├── 📁 Data/                         # Raw procurement datasets
+│
+├── 📁 models/                       # Model development and training resources
+│
+├── 📁 notebooks/                    # Exploratory analysis and experimentation
+│
+├── 📁 output/                       # Intermediate generated outputs
+│
+├── 📁 outputs/                      # Final processed datasets and predictions
+│
+├── 🤖 catboost_risk_engine.pkl      # Trained CatBoost risk prediction model
+├── 🤖 isolation_forest_engine.pkl   # Trained Isolation Forest anomaly detector
+│
+├── 🎥 AUDITIQ DEMO.mp4              # Product demonstration video
+│
+├── package.json                     # Root project configuration
+├── package-lock.json                # Dependency lock file
+├── .gitignore                       # Git ignore rules
+└── README.md                        # Project documentation
+```
+
+### Repository Organization
+
+The project follows a modular full-stack architecture where the **React frontend**, **FastAPI backend**, **machine learning models**, and **PostgreSQL database** are cleanly separated. This structure enables independent development, testing, deployment, and future scalability while maintaining a production-ready codebase.
 ---
 
 ## 🚀 Core Features
